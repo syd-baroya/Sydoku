@@ -1,0 +1,2 @@
+# Sydoku
+Soduku solution checker
