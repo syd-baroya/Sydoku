@@ -1,0 +1,61 @@
+/*
+ *Vertex header file
+*/
+
+#ifndef VERTEX_H
+#define VERTEX_H
+
+#include <vector>
+
+class Vertex
+{
+public:
+    std::string data;
+    std::string color;
+    bool discovered;
+    int pre=0;
+    int post=0;
+    std::vector<Vertex> next;
+
+    Vertex(std::string info){
+        data = info;
+        discovered = false;
+    }
+
+    void setCol(std::string val){
+        color = val;
+    }
+    std::string getCol(){
+        return color;
+    }
+    void addAdj(Vertex vert){
+        next.push_back(vert);
+    }
+
+    std::string getData(){
+        return data;
+    }
+    std::vector<Vertex> getArr(){
+        return next;
+    }
+    void setDiscovered(bool val){
+        discovered = val;
+    }
+    bool getDiscovered(){
+        return discovered;
+    }
+    int previsit(int clock){
+        pre = clock;
+        return clock+1;
+    }
+    int postvisit(int clock){
+        post = clock;
+        return clock-1;
+    }
+    int getPre(){
+        return pre;
+    }
+};
+
+
+#endif
