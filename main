@@ -1,0 +1,179 @@
+/*
+ * Sydoku main
+ */
+
+#include <iostream>
+#include <cstdlib>
+#include <fstream>
+#include <cstring>
+#include "vertex.h"
+
+using namespace std;
+
+static int clock_s;
+
+vector<vector<string>> readline(ifstream *file){
+    string line;
+    vector<string> row;
+    vector<vector<string>> puzzle;
+    char *dup, *token;
+    while(getline(*file, line)){
+        dup = strdup(line.c_str());
+        token = strtok(dup, " ");
+        while(token != NULL){
+            row.push_back(string(token));
+            token = strtok(NULL, " ");
+        }
+        puzzle.push_back(row);
+        row.clear();
+        free(dup);
+
+    }
+    return puzzle;
+}
+
+vector<Vertex> createVList(vector<vector<string>> puzzle){
+    vector<Vertex> vList;
+    for(int i=0; i<9;i++){
+        Vertex newV = Vertex(puzzle[i][i*3+(i/3)]);
+        vList.push_back(newV);
+    }
+    for(int j=0; j<9; j++){
+        for(int k=0; k<8; k++){
+            if(k == j*3+(j/3))
+                continue;
+            vList[j].addAdj(Vertex(puzzle[j][k]));
+            vList[j].addAdj(Vertex(puzzle[k][j]));
+        }
+    }
+    vList[0].addAdj(Vertex(puzzle[1][1]));
+    vList[0].addAdj(Vertex(puzzle[1][2]));
+    vList[0].addAdj(Vertex(puzzle[2][1]));
+    vList[0].addAdj(Vertex(puzzle[2][2]));
+    
+    vList[1].addAdj(Vertex(puzzle[0][3]));
+    vList[1].addAdj(Vertex(puzzle[0][4]));
+    vList[1].addAdj(Vertex(puzzle[2][4]));
+    vList[1].addAdj(Vertex(puzzle[2][5]));
+    
+    vList[2].addAdj(Vertex(puzzle[0][6]));
+    vList[2].addAdj(Vertex(puzzle[0][7]));
+    vList[2].addAdj(Vertex(puzzle[1][6]));
+    vList[2].addAdj(Vertex(puzzle[1][7]));
+    
+    vList[3].addAdj(Vertex(puzzle[4][0]));
+    vList[3].addAdj(Vertex(puzzle[4][2]));
+    vList[3].addAdj(Vertex(puzzle[5][0]));
+    vList[3].addAdj(Vertex(puzzle[5][2]));
+    
+    vList[4].addAdj(Vertex(puzzle[3][2]));
+    vList[4].addAdj(Vertex(puzzle[3][4]));
+    vList[4].addAdj(Vertex(puzzle[5][3]));
+    vList[4].addAdj(Vertex(puzzle[5][5]));
+    
+    vList[5].addAdj(Vertex(puzzle[3][5]));
+    vList[5].addAdj(Vertex(puzzle[3][7]));
+    vList[5].addAdj(Vertex(puzzle[4][5]));
+    vList[5].addAdj(Vertex(puzzle[4][7]));
+    
+    vList[6].addAdj(Vertex(puzzle[7][0]));
+    vList[6].addAdj(Vertex(puzzle[7][1]));
+    vList[6].addAdj(Vertex(puzzle[8][0]));
+    vList[6].addAdj(Vertex(puzzle[8][1]));
+    
+    vList[7].addAdj(Vertex(puzzle[6][2]));
+    vList[7].addAdj(Vertex(puzzle[6][3]));
+    vList[7].addAdj(Vertex(puzzle[8][3]));
+    vList[7].addAdj(Vertex(puzzle[8][4]));
+    
+    vList[8].addAdj(Vertex(puzzle[6][5]));
+    vList[8].addAdj(Vertex(puzzle[6][6]));
+    vList[8].addAdj(Vertex(puzzle[7][5]));
+    vList[8].addAdj(Vertex(puzzle[7][6]));
+
+    
+    return vList;
+}
+
+
+
+/*
+ 
+ 
+ def explore(G, v) :
+     v.setDiscovered(True)
+     if(previsit[v]%2==0) :
+         v.setCol("Orange")
+     else :
+         v.setCol("Purple")
+ 
+     previsit(v)
+     for adj in v.getArr() :
+         if G[adj].getDiscovered() == False :
+             explore(S, G, G[adj])
+     postvisit(v)
+ 
+ def DFS(G) :
+     counter=0
+     for v in G :
+         if v.getDiscovered() == False :
+             explore(G, v)
+             counter+=1
+     return counter
+ 
+ def twoCol(G) :
+     for v in G :
+         for adj in v.getArr() :
+             if G[adj].getCol() == v.getCol() :
+                 return False
+     return True
+ 
+
+
+*/
+int main(int argc, char **argv){
+    
+    ifstream inFile;
+    vector<vector<string>> puzzle;
+    vector<Vertex> Graph;
+
+    inFile.open(argv[1]);
+    
+    if(!inFile){
+        cout<<"Unable to open "<<argv[1]<<endl;
+        return 1;
+    }
+
+    puzzle = readline(&inFile);
+    Graph = createVList(puzzle);
+    inFile.close();
+    
+    
+    return 0;
+}
+
+
+
+//def main() :
+//sys.argv
+//
+//try:
+//file = open(sys.argv[1], "r")
+//except:
+//print 'Unable to open :{}'.format(sys.argv[1])
+//sys.exit()
+//line = file.readlines()
+//Graph = createVList(line)
+//
+//numComp = DFS(Graph)
+//
+//if twoCol(Graph) :
+//print "Is two-colorable"
+//else :
+//print "Is not two-colorable"
+//
+//print "{} connected component(s)".format(numComp)
+//
+//if __name__ == '__main__':
+//main()
+
